@@ -5,9 +5,12 @@ import in.mohammed.billingsoftware.io.CategoryRequest;
 import in.mohammed.billingsoftware.io.CategoryResponse;
 import in.mohammed.billingsoftware.repository.CategoryRepository;
 import in.mohammed.billingsoftware.service.CategoryService;
+import in.mohammed.billingsoftware.service.FileUploadService;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,12 +20,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
    private final CategoryRepository categoryRepository;
+   private final FileUploadService fileUploadService;
 
     @Override
-    public CategoryResponse add(CategoryRequest categoryRequest) {
-         CategoryEntity newCategory =convertToEntity(categoryRequest);
-         newCategory=categoryRepository.save(newCategory);
-          return convertToResponse(newCategory);
+    public CategoryResponse add(CategoryRequest categoryRequest , MultipartFile file) {
+        String imgUrl = fileUploadService.uploadFile(file); // Upload the file and get the URL
+
+         CategoryEntity newCategory =convertToEntity(categoryRequest); // Convert request to entity
+        newCategory.setImgUrl(imgUrl); // Set the image URL
+         newCategory=categoryRepository.save(newCategory); // saving the entity to the databse
+          return convertToResponse(newCategory); // Convert entity to response
     }
 
     @Override
@@ -37,6 +44,8 @@ public class CategoryServiceImpl implements CategoryService {
        CategoryEntity existingCategory = categoryRepository.findByCategoryId(categoryId).orElseThrow(()->new RuntimeException(
                 "Category with ID: " + categoryId + " not found"
         ));
+        // Delete the image from S3
+        fileUploadService.deleteFile(existingCategory.getImgUrl());
          categoryRepository.delete(existingCategory);
     }
 

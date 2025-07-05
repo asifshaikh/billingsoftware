@@ -6,8 +6,6 @@ import in.mohammed.billingsoftware.io.CategoryResponse;
 import in.mohammed.billingsoftware.repository.CategoryRepository;
 import in.mohammed.billingsoftware.service.CategoryService;
 import in.mohammed.billingsoftware.service.FileUploadService;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

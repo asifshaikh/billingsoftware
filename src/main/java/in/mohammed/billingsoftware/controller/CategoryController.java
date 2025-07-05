@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import in.mohammed.billingsoftware.io.CategoryRequest;
 import in.mohammed.billingsoftware.io.CategoryResponse;
 import in.mohammed.billingsoftware.service.CategoryService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +14,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {
+
     private final CategoryService categoryService;
-    @PostMapping
+
+    @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponse addCategory(@RequestPart("category") String categoryString,
                                         @RequestPart("file") MultipartFile file) {
@@ -35,12 +35,12 @@ public class CategoryController {
         }
 
     }
-    @GetMapping
+    @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<CategoryResponse> fetchCategories() {
         return categoryService.read();
     }
-    @DeleteMapping("/{categoryId}")
+    @DeleteMapping("/admin/categories/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable String categoryId) {
         try{

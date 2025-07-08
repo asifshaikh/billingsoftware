@@ -4,6 +4,7 @@ import in.mohammed.billingsoftware.entity.CategoryEntity;
 import in.mohammed.billingsoftware.io.CategoryRequest;
 import in.mohammed.billingsoftware.io.CategoryResponse;
 import in.mohammed.billingsoftware.repository.CategoryRepository;
+import in.mohammed.billingsoftware.repository.ItemRepository;
 import in.mohammed.billingsoftware.service.CategoryService;
 import in.mohammed.billingsoftware.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
    private final CategoryRepository categoryRepository;
    private final FileUploadService fileUploadService;
+   private final ItemRepository itemRepository;
 
     @Override
     public CategoryResponse add(CategoryRequest categoryRequest , MultipartFile file) {
@@ -48,6 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private CategoryResponse convertToResponse(CategoryEntity newCategory) {
+        Integer itemsCount = itemRepository.countByCategoryId(newCategory.getId());
         return CategoryResponse.builder()
                 .categoryId(newCategory.getCategoryId())
                 .name(newCategory.getName())
@@ -56,6 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .imgUrl(newCategory.getImgUrl())
                 .createdAt(newCategory.getCreatedAt())
                 .updatedAt(newCategory.getUpdatedAt())
+                .items(itemsCount)
                 .build();
     }
 
